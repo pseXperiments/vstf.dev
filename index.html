@@ -15,10 +15,10 @@
 
 <p>Welcome to the framework for verifiable state transition functions.</p>
 
-<p>Given a series of states \( \{ \text{state}_0, \text{state}_1, \dots, \text{state}_{N-1} \} \), a corresponding series of proofs \( \{ \text{proof}_0, \text{proof}_1, \dots, \text{proof}_{N-1} \} \), and a series of inputs \( \{ \text{input}_1, \dots, \text{input}_{N-1} \} \), the verifiable state transition function, denoted as \( \text{vstf} \), is verified incrementally as:</p>
+<p>Given a series of states \( \{ \text{state}_0, \text{state}_1, \dots, \text{state}_{N} \} \), a corresponding series of proofs \( \{ \text{proof}_0, \text{proof}_1, \dots, \text{proof}_{N} \} \), and a series of inputs \( \{ \text{input}_1, \dots, \text{input}_{N} \} \), the verifiable state transition function, denoted as \( \text{vstf} \), is verified incrementally as:</p>
 
 \[
-\forall i \in \{ 1, \dots, N-1 \} : \text{vstf}(\text{state}_i, \text{state}_{i-1}, \text{proof}_i, \text{proof}_{i-1}, \text{input}_i) = 1
+\forall i \in \{ 1, \dots, N \} : \text{vstf}(\text{state}_i, \text{state}_{i-1}, \text{proof}_i, \text{proof}_{i-1}, \text{input}_i) = 1
 \]
 
 <p>Instruction sets for the standard benchmark are currently in progress.</p>
