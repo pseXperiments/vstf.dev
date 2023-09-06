@@ -1,31 +1,34 @@
 use std::fmt::Debug;
 
+pub trait State: Clone + Debug {}
+
+pub trait Executable: Clone + Debug {
+    type State: State;
+    fn execute(&self, state: Self::State) -> Self::State;
+}
+
 pub trait Instance: Clone + Debug {
     type ProvableObject: Clone + Debug;
     type ProvedObject: Clone + Debug;
     type Error: Clone + Debug;
+    type State: Clone + Debug;
 
-    fn prove(instance: &Self::ProvableObject) -> Result<Self::ProvedObject, Self::Error>;
-    fn verify(instance: &Self::ProvedObject) -> bool;
+    fn prove(&self) -> Result<Self::ProvedObject, Self::Error>;
+    fn verify(&self) -> bool;
 }
 
 pub trait StateTransition: Clone + Debug {
-    type State: Clone + Debug;
     type Provable: Instance;
     type Executable: Clone + Debug;
 
     type Error: Clone + Debug;
 
-    fn single_stf(
-        state: Self::State,
-        prev_instance: Option<Self::Provable>,
-        execution: &Self::Executable,
-    ) -> (Option<Self::Provable>, Self::State);
-
-    fn full_stf(
-        initial_state: Self::State,
-        executions: Vec<Self::Executable>,
-    ) -> Result<(Self::Provable, Self::State), Self::Error>;
-
-    fn verify_stf(proof: Self::Provable, executions: Vec<Self::Executable>) -> bool;
+    // if it uses folding or recursive method,
+    // then the number of element of each parameter should be 1
+    // And run this vstf for all steps
+    fn vstf(
+        input_instance: Vec<Self::Provable>,
+        result_instance: Self::Provable,
+        execution: Vec<Self::Executable>,
+    ) -> bool;
 }

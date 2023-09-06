@@ -1,72 +1,103 @@
 use crate::{
     execution::isa::Instruction,
-    state::cpu::State,
-    state_transition::{Instance, StateTransition},
+    state::cpu::CpuState,
+    state_transition::{Executable, Instance, StateTransition},
+    Error,
 };
 
 #[derive(Debug, Clone)]
-struct LookupCpu();
+struct LookupCpu {
+    instructions: Vec<Instruction>,
+    initial: CpuState,
+}
 
-#[derive(Debug, Clone)]
-struct LookupInstance {}
+impl LookupCpu {
+    fn init() -> Self {
+        LookupCpu {
+            instructions: vec![],
+            initial: CpuState::init(),
+        }
+    }
 
-#[derive(Debug, Clone)]
-enum LookupError {
-    Misc,
+    fn full_pass(&self) {
+        let instances = self.run_all_instructions();
+
+    }
+
+    fn run_all_instructions(&self) -> Vec<LookupInstance> {
+        let res = vec![];
+        let mut state = self.initial;
+        for instr in self.instructions.iter() {
+            state = instr.execute(state);
+        }
+        res
+    }
 }
 
 #[derive(Debug, Clone)]
-enum StateTransitionError {
-    Misc,
+struct LookupQuery {}
+
+#[derive(Debug, Clone)]
+struct LookupInstance {
+    state: CpuState,
+    lookup_query: LookupQuery,
+}
+
+impl Instance for Vec<LookupInstance> {
+    type ProvableObject = Vec<LookupInstance>;
+    type ProvedObject = LookupArgument;
+
+    type State = CpuState;
+    type Error = Error;
+
+    fn prove(&self) -> Result<Self::ProvedObject, Self::Error> {
+        Ok(LookupArgument {  })
+    }
+
+    fn verify(&self) -> bool {
+        todo!()
+    }
 }
 
 impl Instance for LookupInstance {
     type ProvableObject = LookupInstance;
-    type ProvedObject = LookupInstance;
+    type ProvedObject = LookupArgument;
 
-    type Error = LookupError;
+    type State = CpuState;
+    type Error = Error;
 
     // TODO
-    fn prove(instance: &Self::ProvableObject) -> Result<Self::ProvedObject, Self::Error> {
-        Ok(instance.clone())
+    fn prove(&self) -> Result<Self::ProvedObject, Self::Error> {
+        Ok(LookupArgument {  })
     }
 
-    fn verify(instance: &Self::ProvedObject) -> bool {
+    fn verify(&self) -> bool {
         todo!()
     }
 }
 
+#[derive(Debug, Clone)]
+struct LookupArgument {
+
+}
+
 impl StateTransition for LookupCpu {
     type Executable = Instruction;
-    type State = State;
+
     type Provable = LookupInstance;
-    type Error = StateTransitionError;
+    type Error = Error;
 
-    fn full_stf(
-        state: Self::State,
-        executions: Vec<Self::Executable>,
-    ) -> Result<(Self::Provable, Self::State), Self::Error> {
-        let mut curr_state = state;
-        let mut instance = None;
-        for exec in executions.iter() {
-            (instance, curr_state) = Self::single_stf(curr_state, instance, exec);
-        }
-        let final_instance = match instance {
-            Some(i) => i,
-            None => return Err(StateTransitionError::Misc),
-        };
-        Ok((final_instance, curr_state))
+    fn vstf(
+        prev_instance: Vec<Self::Provable>,
+        result_instance: Self::Provable,
+        execution: Vec<Self::Executable>,
+    ) -> bool {
+        // Lookup argument
+        result_instance.verify()
     }
+}
 
-    fn single_stf(
-        state: Self::State,
-        instance: Option<Self::Provable>,
-        execution: &Self::Executable,
-    ) -> (Option<Self::Provable>, Self::State) {
-        todo!()
-    }
-
-    fn verify_stf(proof: Self::Provable, executions: Vec<Self::Executable>) -> bool {
-        todo!()
-    }
+#[cfg(test)]
+fn test_full() {
+    let cpu = LookupCpu::init();
 }

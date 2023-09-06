@@ -1,10 +1,24 @@
+use crate::state::cpu::CpuState;
+use crate::state_transition::Executable;
+
 #[derive(Debug, Clone)]
 pub enum Instruction {
+    Nop,
     BinOp { op: BinaryOperation },
     Branch(Branch),
     Jump(usize),
     Load,
     Save,
+}
+
+impl Executable for Instruction {
+    type State = CpuState;
+    fn execute(&self, state: Self::State) -> Self::State {
+        match self {
+            Self::Nop => state,
+            _ => todo!(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
